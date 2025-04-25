@@ -1,4 +1,7 @@
 ﻿namespace Plops
 {
-    const string MrMeow = "meowers";
+    public class McGee
+    {
+        public const string MrMeow = "meowers";
+    }
 }

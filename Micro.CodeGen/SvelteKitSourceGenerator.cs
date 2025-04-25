@@ -23,7 +23,10 @@ namespace Micro.CodeGen
                 // TODO
                 context.AddSource("Test.g.cs", $@"namespace Plops
 {{
-    const string MrMeow = ""meowers"";
+    public class McGee
+    {{
+        public const string MrMeow = ""meowers"";
+    }}
 }}");
             });
         }
@@ -37,11 +40,8 @@ namespace Micro.CodeGen
 
             foreach (var attr in symbol.GetAttributes())
             {
-                File.WriteAllText(
-                    @"C:\Users\8enwi\source\repos\benjineering\micros\Micro\Micro.Console\GeneratedFiles\log.txt",
-                    $"{attr.AttributeClass.ToDisplayString()}");
-
-                var attrName = attr.AttributeClass.ToDisplayString(); // TODO: Check full namespace somehow
+                // TODO: fix this hot mess (name is different between test and dev)
+                var attrName = attr.AttributeClass.ToDisplayString();
                 if (attrName == "RequestHandler" || attrName == "Micro.Common.Requests.RequestHandlerAttribute")
                     return symbol;
             }

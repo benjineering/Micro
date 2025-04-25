@@ -12,6 +12,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="GeneratedFiles\**" />
+	  <EmbeddedResource Remove="GeneratedFiles\**" />
+	  <None Remove="GeneratedFiles\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="..\Micro.CodeGen\Micro.CodeGen.csproj" OutputItemType="Analyzer" />
 		<ProjectReference Include="..\Micro.Common\Micro.Common.csproj" />
 	</ItemGroup>

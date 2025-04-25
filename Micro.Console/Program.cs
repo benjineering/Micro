@@ -15,6 +15,7 @@ public class Program
 {
     public static void Main()
     {
-        //var x = Plops.Meow;
+        var x = Plops.McGee.MrMeow;
+        System.Console.WriteLine(x);
     }
 }
