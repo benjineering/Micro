@@ -1,7 +1,6 @@
-﻿using Micro.Common.Requests;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Collections.Generic;
+using System.IO;
 
 namespace Micro.CodeGen
 {
@@ -22,7 +21,7 @@ namespace Micro.CodeGen
             initContext.RegisterSourceOutput(requestHandlers, (context, symbol) =>
             {
                 // TODO
-                context.AddSource("Test", $@"namespace Plops
+                context.AddSource("Test.g.cs", $@"namespace Plops
 {{
     const string MrMeow = ""meowers"";
 }}");
@@ -38,8 +37,12 @@ namespace Micro.CodeGen
 
             foreach (var attr in symbol.GetAttributes())
             {
+                File.WriteAllText(
+                    @"C:\Users\8enwi\source\repos\benjineering\micros\Micro\Micro.Console\GeneratedFiles\log.txt",
+                    $"{attr.AttributeClass.ToDisplayString()}");
+
                 var attrName = attr.AttributeClass.ToDisplayString(); // TODO: Check full namespace somehow
-                if (attrName == "RequestHandler")
+                if (attrName == "RequestHandler" || attrName == "Micro.Common.Requests.RequestHandlerAttribute")
                     return symbol;
             }
 

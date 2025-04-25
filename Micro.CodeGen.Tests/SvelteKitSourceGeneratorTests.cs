@@ -31,7 +31,7 @@ public static class Yes
                 Sources = { input },
                 GeneratedSources =
                 {
-                    (typeof(SvelteKitSourceGenerator), "Test.cs", expected)
+                    (typeof(SvelteKitSourceGenerator), "Test.g.cs", expected)
                 }
             }
         };
