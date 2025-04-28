@@ -29,7 +29,7 @@ jobs:
 
     - name: Publish Lambda for linux-arm64
       run: |
-        dotnet publish Micro.Dev.Lambda -c Release \
+        dotnet publish Micro.Dev.Lambda/src/Micro.Dev.Lambda -c Release \
                        -r linux-arm64 \
                        --self-contained true \
                        -p:PublishAot=true \
