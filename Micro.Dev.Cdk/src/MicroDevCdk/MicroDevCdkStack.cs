@@ -12,7 +12,7 @@ namespace MicroDevCdk
             {
                 Runtime = Runtime.PROVIDED_AL2023,
                 Handler = "bootstrap",
-                Code = Code.FromAsset(@"C:\Users\8enwi\OneDrive\Desktop\bootstrap.zip"),
+                Code = Code.FromAsset(@"C:\Users\8enwi\OneDrive\Desktop\Micro.Dev.Lambda.zip"),
                 Architecture = Architecture.ARM_64,
                 MemorySize = 128,
                 Timeout = Duration.Seconds(10),

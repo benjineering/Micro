@@ -2,17 +2,15 @@ using Amazon.Lambda.Core;
 using Amazon.Lambda.Serialization.SystemTextJson;
 using Amazon.Lambda.RuntimeSupport;
 using System.Text.Json.Serialization;
-using System.Text.Json;
-using System.Text.Json.Serialization.Metadata;
 
 namespace Micro.Dev.Lambda;
 
 public class Function
 {
     //public async Task FunctionHandler(Stream inputStream, Stream outputStream, ILambdaContext context)
-    public string FunctionHandler(string input, ILambdaContext context)
+    public string FunctionHandler(MyRequest input, ILambdaContext context)
     {
-        return $"Hello, {input}! From .NET 9 AoT on Graviton4.";
+        return $"Hello, {input.Name}! From .NET 9 AoT on Graviton4.";
 
         //FunctionRequest request;
         //try
@@ -43,16 +41,16 @@ partial class LambdaJsonContext : JsonSerializerContext { }
 
 public class Program
 {
-    static async Task Main(string[] args)
+    static async Task Main()
     {
         // Create a Lambda runtime with our function handler
-        static string handler(string input, ILambdaContext context)
+        static string handler(MyRequest input, ILambdaContext context)
         {
             return new Function().FunctionHandler(input, context);
         }
 
         var serializer = new SourceGeneratorLambdaJsonSerializer<LambdaJsonContext>();
-        using var handlerWrapper = HandlerWrapper.GetHandlerWrapper((Func<string, ILambdaContext, string>)handler, serializer);
+        using var handlerWrapper = HandlerWrapper.GetHandlerWrapper((Func<MyRequest, ILambdaContext, string>)handler, serializer);
         using var bootstrap = new LambdaBootstrap(handlerWrapper);
 
         await bootstrap.RunAsync();
