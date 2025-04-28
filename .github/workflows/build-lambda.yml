@@ -1,10 +1,12 @@
 name: Build and Publish Lambda Native AOT
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: 'Publish Lambda (default true)'
+        required: true
+        default: 'true'
 
 jobs:
   build:
