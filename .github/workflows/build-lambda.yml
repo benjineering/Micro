@@ -1,0 +1,46 @@
+name: Build and Publish Lambda Native AOT
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Build Native AOT Lambda
+    runs-on: ubuntu-24.04-arm
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET 9
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 9.0.x
+
+    - name: Install prerequisites
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y clang zlib1g-dev
+
+    - name: Publish Lambda for linux-arm64
+      run: |
+        dotnet publish -c Release \
+                       -r linux-arm64 \
+                       --self-contained true \
+                       -p:PublishAot=true \
+                       -p:PublishTrimmed=true \
+                       -o ./publish
+
+    - name: Rename output to bootstrap
+      run: |
+        mv ./publish/Micro.Dev.Lambda ./publish/bootstrap
+        chmod +x ./publish/bootstrap
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Micro.Dev.Lambda
+        path: ./publish/bootstrap

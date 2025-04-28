@@ -1,6 +1,9 @@
 using Amazon.Lambda.Core;
 using Amazon.Lambda.Serialization.SystemTextJson;
 using Amazon.Lambda.RuntimeSupport;
+using System.Text.Json.Serialization;
+using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 
 namespace Micro.Dev.Lambda;
 
@@ -30,6 +33,14 @@ public class Function
         // TODO: somehow call the method
     }
 }
+
+public class MyRequest
+{
+    public string Name { get; set; }
+}
+[JsonSerializable(typeof(MyRequest))]
+partial class LambdaJsonContext : JsonSerializerContext { }
+
 public class Program
 {
     static async Task Main(string[] args)
@@ -40,8 +51,7 @@ public class Program
             return new Function().FunctionHandler(input, context);
         }
 
-        // TODO: var serializer = new SourceGeneratorLambdaJsonSerializer<HelloLambdaAotJsonContext>();
-        var serializer = new DefaultLambdaJsonSerializer();
+        var serializer = new SourceGeneratorLambdaJsonSerializer<LambdaJsonContext>();
         using var handlerWrapper = HandlerWrapper.GetHandlerWrapper((Func<string, ILambdaContext, string>)handler, serializer);
         using var bootstrap = new LambdaBootstrap(handlerWrapper);
 
