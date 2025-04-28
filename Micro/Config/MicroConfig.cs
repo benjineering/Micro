@@ -1,4 +1,4 @@
-﻿namespace Micro.Common.Config
+﻿namespace Micro.Config
 {
     public class MicroConfig
     {

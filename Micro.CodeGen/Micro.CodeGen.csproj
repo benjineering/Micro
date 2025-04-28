@@ -13,8 +13,4 @@
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.13.0" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\Micro.Common\Micro.Common.csproj" />
-	</ItemGroup>
-
 </Project>

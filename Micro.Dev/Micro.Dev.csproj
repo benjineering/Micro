@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<PublishAot>true</PublishAot>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Micro.CodeGen\Micro.CodeGen.csproj" />
+		<ProjectReference Include="..\Micro\Micro.csproj" />
+	</ItemGroup>
+
+</Project>

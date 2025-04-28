@@ -1,10 +1,9 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Testing;
+﻿using Microsoft.CodeAnalysis.CSharp.Testing;
 using Microsoft.CodeAnalysis.Testing.Verifiers;
 
 namespace Micro.CodeGen.Tests;
 
-public class SvelteKitSourceGeneratorTests
+public class SourceGeneratorTests
 {
     [Fact]
     public async Task SuckItAndSee()
@@ -24,14 +23,14 @@ public static class Yes
     const string MrMeow = ""meowers"";
 }";
 
-        var test = new CSharpSourceGeneratorTest<SvelteKitSourceGenerator, XUnitVerifier>
+        var test = new CSharpSourceGeneratorTest<SourceGenerator, XUnitVerifier>
         {
             TestState =
             {
                 Sources = { input },
                 GeneratedSources =
                 {
-                    (typeof(SvelteKitSourceGenerator), "Test.g.cs", expected)
+                    (typeof(SourceGenerator), "Test.g.cs", expected)
                 }
             }
         };

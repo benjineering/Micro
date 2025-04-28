@@ -1,8 +1,7 @@
 ﻿using System;
 
-namespace Micro.Common.Requests
+namespace Micro.Requests
 {
-    [AttributeUsage(AttributeTargets.Method)]
+    [AttributeUsage(AttributeTargets.Class)]
     public class RequestHandlerAttribute : Attribute { }
 }
-
