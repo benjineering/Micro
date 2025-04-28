@@ -9,6 +9,7 @@
 		<PublishTrimmed>true</PublishTrimmed>
 		<EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
 		<ImplicitUsings>true</ImplicitUsings>
+		<InvariantGlobalization>true</InvariantGlobalization>
 	</PropertyGroup>
 	
 	<ItemGroup>
