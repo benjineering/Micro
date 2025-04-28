@@ -4,9 +4,9 @@ using Micro.Responses;
 namespace Micro.Dev.Products;
 
 // TODO: dependency injection
+[RequestHandler]
 public class ProductHandlers
 {
-    [RequestHandler]
     public async Task<Response> GetProductDetail(Guid id)
     {
         return Response.Success(new 

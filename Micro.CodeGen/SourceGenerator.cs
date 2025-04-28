@@ -1,5 +1,7 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿using Micro.CodeGen.Config;
+using Micro.CodeGen.Generators;
+using Micro.CodeGen.SyntaxParser;
+using Microsoft.CodeAnalysis;
 using System;
 
 namespace Micro.CodeGen
@@ -9,58 +11,32 @@ namespace Micro.CodeGen
     {
         public void Initialize(IncrementalGeneratorInitializationContext initContext)
         {
+            // TODO: pass config from project (we can't use system json, and i'm not sre how aot works with newtonsoft? might be fine...)
+            var config = new MicroConfig();
+            IGenerator generator;
+            switch (config.ServerGeneratorType)
+            {
+                case ServerGeneratorType.Http:
+                    generator = new HttpGenerator();
+                    break;
+                case ServerGeneratorType.Lambda:
+                    generator = new LambdaGenerator();
+                    break;
+                default:
+                    throw new Exception($"Unsupported ServerGeneratorType {config.ServerGeneratorType}");
+            }
+
             //var textFiles = initContext.AdditionalTextsProvider
             //    .Where(file => file.Path.EndsWith("+server.svelte"));
 
             var requestHandlers = initContext.SyntaxProvider.CreateSyntaxProvider(
-                predicate: (x, _) => NodeIsRequestHandlerClass(x),
-                transform: (x, _) => GetRequestHandlerClassMethods(x)
+                predicate: (x, _) => ClassParser.NodeIsRequestHandlerClass(x),
+                transform: (x, _) => ClassParser.Parse(x)
             )
             .Where(x => x != null);
 
-            initContext.RegisterSourceOutput(requestHandlers, (context, symbol) =>
-            {
-                // TODO
-                context.AddSource("Test.g.cs", $@"namespace Plops
-{{
-    public class McGee
-    {{
-        public const string MrMeow = ""meowers"";
-    }}
-}}");
-            });
-        }
-
-        private static bool NodeIsRequestHandlerClass(SyntaxNode node)
-        {
-            if (!(node is ClassDeclarationSyntax klass) || klass.AttributeLists.Count == 0)
-                return false;
-
-            foreach (var attrList in klass.AttributeLists)
-            {
-                foreach (var attr in attrList.Attributes)
-                {
-                    // TODO: fix this hot mess (name is different between test and dev)
-                    var attrName = attr.Name.ToFullString();
-                    if (attrName == "RequestHandler" || attrName == "Micro.Requests.RequestHandlerAttribute")
-                        return true;
-                }
-            }
-
-            return false;
-        }
-
-        private static (string ClassName, IMethodSymbol[] Methods)? GetRequestHandlerClassMethods(GeneratorSyntaxContext context)
-        {
-            if (!(context.Node is ClassDeclarationSyntax klass))
-                return null;
-
-            foreach (var child in klass.ChildNodesAndTokens())
-            {
-                //child.
-            }
-
-            return null;
+            initContext.RegisterSourceOutput(requestHandlers, (_, klass) =>
+                generator.Generate(klass));
         }
     }
 }
