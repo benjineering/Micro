@@ -1,13 +1,51 @@
 ﻿using Micro.CodeGen.Models;
-using System;
+using System.Collections.Generic;
 
 namespace Micro.CodeGen.Generators
 {
     class HttpGenerator : IGenerator
     {
-        public string Generate(Klass klass)
+        public string Generate(IEnumerable<Klass> klass)
         {
-            throw new NotImplementedException();
+            // TODO:
+            //   - generate app.MapMicroEndpoints();
+            //   - generate TS https://chatgpt.com/c/68115978-a344-800d-83fc-ec969fcb0a24
+            //      - models (create a common generator)
+            //      - client
+
+            return @"namespace Micro.IoC;
+
+public static class EndpointExtensions
+{
+    public static void ConfigureMicroJsonContexts(IServiceCollection services)
+    {
+
+    }
+
+    public static void MapMicroEndpoints(WebApplication app)
+    {
+
+    }
+}
+";
         }
     }
 }
+
+//builder.Services.ConfigureHttpJsonOptions(options =>
+//{
+//    foreach (var (context, i) in Micro.Generated.SerializerContexts.Select((x, i) => (x, i)))
+//    {
+//        options.SerializerOptions.TypeInfoResolverChain.Insert(i, context);
+//    }
+//});
+
+//foreach (var endpointGroup in Micro.Generated.EndpointGroups)
+//{
+//    var group = app.MapGroup($"/{endpointGroup.Name}");
+
+//    foreach (var endpoint in group.Endpoints)
+//    {
+//        group.MapGet($"/{endpoint.Name}", () => endpoint.Method);
+//    }
+//}

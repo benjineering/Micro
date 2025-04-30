@@ -11,7 +11,7 @@ namespace Micro.CodeGen
     {
         public void Initialize(IncrementalGeneratorInitializationContext initContext)
         {
-            // TODO: pass config from project (we can't use system json, and i'm not sre how aot works with newtonsoft? might be fine...)
+            // TODO: pass config from project (we can't use system json, and i'm not sure how aot works with newtonsoft? might be fine...)
             var config = new MicroConfig();
             IGenerator generator;
             switch (config.ServerGeneratorType)
@@ -33,7 +33,8 @@ namespace Micro.CodeGen
                 predicate: (x, _) => ClassParser.NodeIsRequestHandlerClass(x),
                 transform: (x, _) => ClassParser.Parse(x)
             )
-            .Where(x => x != null);
+            .Where(x => x != null)
+            .Collect();
 
             initContext.RegisterSourceOutput(requestHandlers, (_, klass) =>
                 generator.Generate(klass));

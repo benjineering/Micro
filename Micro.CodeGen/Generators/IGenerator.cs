@@ -1,9 +1,10 @@
 ﻿using Micro.CodeGen.Models;
+using System.Collections.Generic;
 
 namespace Micro.CodeGen.Generators
 {
     interface IGenerator
     {
-        string Generate(Klass klass);
+        string Generate(IEnumerable<Klass> klass);
     }
 }
