@@ -11,9 +11,9 @@ public class SourceGeneratorTests
         var input = @"
 using Micro.Common.Requests;
 
+[RequestHandler]
 public static class Yes
 {    
-    [RequestHandler]
     static void Meow() { }
 }"
         ;
@@ -30,7 +30,7 @@ public static class Yes
                 Sources = { input },
                 GeneratedSources =
                 {
-                    (typeof(SourceGenerator), "Test.g.cs", expected)
+                    (typeof(SourceGenerator), "Generated.g.cs", expected)
                 }
             }
         };

@@ -1,11 +1,12 @@
 ﻿using Micro.CodeGen.Models;
+using Microsoft.CodeAnalysis;
 using System.Collections.Generic;
 
 namespace Micro.CodeGen.Generators
 {
     class HttpGenerator : IGenerator
     {
-        public string Generate(IEnumerable<Klass> klass)
+        public void Generate(SourceProductionContext context, IEnumerable<Klass> klass)
         {
             // TODO:
             //   - generate app.MapMicroEndpoints();
@@ -13,7 +14,7 @@ namespace Micro.CodeGen.Generators
             //      - models (create a common generator)
             //      - client
 
-            return @"namespace Micro.IoC;
+            var source = @"namespace Micro.IoC;
 
 public static class EndpointExtensions
 {
@@ -28,6 +29,7 @@ public static class EndpointExtensions
     }
 }
 ";
+            context.AddSource("Generated.g.cs", source);
         }
     }
 }

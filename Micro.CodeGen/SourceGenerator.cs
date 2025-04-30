@@ -36,8 +36,8 @@ namespace Micro.CodeGen
             .Where(x => x != null)
             .Collect();
 
-            initContext.RegisterSourceOutput(requestHandlers, (_, klass) =>
-                generator.Generate(klass));
+            initContext.RegisterSourceOutput(requestHandlers, (context, klass) =>
+                generator.Generate(context, klass));
         }
     }
 }

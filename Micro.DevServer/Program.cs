@@ -1,4 +1,4 @@
-using Micro.IoC
+using Micro.IoC;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 builder.Services.ConfigureMicroJsonContexts();

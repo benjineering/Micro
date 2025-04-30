@@ -5,10 +5,12 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<PublishAot>true</PublishAot>
+		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+		<CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Micro.CodeGen\Micro.CodeGen.csproj" />
+		<ProjectReference Include="..\Micro.CodeGen\Micro.CodeGen.csproj" OutputItemType="Analyzer" />
 		<ProjectReference Include="..\Micro\Micro.csproj" />
 	</ItemGroup>
 
