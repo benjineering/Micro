@@ -16,7 +16,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Micro.CodeGen\Micro.CodeGen.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+		<Analyzer Include="..\Micro.CodeGen\bin\Debug\netstandard2.0\Micro.CodeGen.dll" />
 		<ProjectReference Include="..\Micro.Dev\Micro.Dev.csproj" />
 	</ItemGroup>
 
