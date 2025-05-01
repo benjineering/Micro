@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
-		<EnforceExtendedAnalyzerRules>false</EnforceExtendedAnalyzerRules>
+		<EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
 		<IncludeBuildOutput>false</IncludeBuildOutput>
 		<OutputItemType>Analyzer</OutputItemType>
 		<IsRoslynComponent>true</IsRoslynComponent>

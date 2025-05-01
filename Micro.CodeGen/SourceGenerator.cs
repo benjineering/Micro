@@ -2,7 +2,10 @@
 using Micro.CodeGen.Generators;
 using Micro.CodeGen.SyntaxParser;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Text;
 using System;
+using System.Text;
 
 namespace Micro.CodeGen
 {
@@ -29,11 +32,11 @@ namespace Micro.CodeGen
             //var textFiles = initContext.AdditionalTextsProvider
             //    .Where(file => file.Path.EndsWith("+server.svelte"));
 
-            var requestHandlers = initContext.SyntaxProvider.CreateSyntaxProvider(
-                predicate: (x, _) => ClassParser.NodeIsRequestHandlerClass(x),
+            var requestHandlers = initContext.SyntaxProvider.ForAttributeWithMetadataName(
+                fullyQualifiedMetadataName: "Micro.Requests.RequestHandlerAttribute", // TODO: get from attribute
+                predicate: (x, _) => x is ClassDeclarationSyntax,
                 transform: (x, _) => ClassParser.Parse(x)
             )
-            .Where(x => x != null)
             .Collect();
 
             initContext.RegisterSourceOutput(requestHandlers, (_, klass) =>

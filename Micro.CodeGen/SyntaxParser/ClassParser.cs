@@ -1,38 +1,18 @@
 ﻿using Micro.CodeGen.Models;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Linq;
 
 namespace Micro.CodeGen.SyntaxParser
 {
     static class ClassParser
     {
-        public static bool NodeIsRequestHandlerClass(SyntaxNode node)
+        public static Klass Parse(GeneratorAttributeSyntaxContext context)
         {
-            if (!(node is ClassDeclarationSyntax klass) || klass.AttributeLists.Count == 0)
-                return false;
-
-            foreach (var attrList in klass.AttributeLists)
-            {
-                foreach (var attr in attrList.Attributes)
-                {
-                    // TODO: fix this hot mess (name is different between test and dev)
-                    var attrName = attr.Name.ToFullString();
-                    if (attrName == "RequestHandler" || attrName == "Micro.Requests.RequestHandlerAttribute")
-                        return true;
-                }
-            }
-
-            return false;
-        }
-
-        public static Klass Parse(GeneratorSyntaxContext context)
-        {
-            if (!(context.SemanticModel.GetDeclaredSymbol(context.Node) is INamedTypeSymbol klass))
-                return null;
+            var klass = context.TargetSymbol.ContainingType;
 
             var name = klass.Name;
-            var ns = klass.ContainingNamespace.ToDisplayString();
+            var ns = klass.ContainingNamespace?.ToDisplayString(
+                SymbolDisplayFormat.FullyQualifiedFormat.WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Omitted));
 
             var methods = klass.GetMembers()
                 .OfType<IMethodSymbol>()
@@ -50,23 +30,6 @@ namespace Micro.CodeGen.SyntaxParser
                 Name = name,
                 Namespace = ns,
             };
-        }
-
-        static string GetNamespace(ClassDeclarationSyntax classDeclaration)
-        {
-            SyntaxNode parent = classDeclaration.Parent;
-
-            while (parent != null)
-            {
-                if (parent is NamespaceDeclarationSyntax namespaceDeclaration)
-                    return namespaceDeclaration.Name.ToString();
-                else if (parent is FileScopedNamespaceDeclarationSyntax fileScopedNamespace)
-                    return fileScopedNamespace.Name.ToString();
-
-                parent = parent.Parent;
-            }
-
-            return null;
         }
     }
 }
