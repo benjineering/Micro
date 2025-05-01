@@ -18,12 +18,12 @@ namespace Micro.CodeGen.Generators
 
 public static class EndpointExtensions
 {
-    public static void ConfigureMicroJsonContexts(IServiceCollection services)
+    public static void ConfigureMicroJsonContexts(this IServiceCollection services)
     {
 
     }
 
-    public static void MapMicroEndpoints(WebApplication app)
+    public static void MapMicroEndpoints(this WebApplication app)
     {
 
     }
