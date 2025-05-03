@@ -1,6 +1,6 @@
 ﻿namespace Micro.CodeGen.Models
 {
-    class Klass
+    class Class
     {
         public string Namespace { get; set; }
 

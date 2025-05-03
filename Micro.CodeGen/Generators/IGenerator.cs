@@ -6,6 +6,6 @@ namespace Micro.CodeGen.Generators
 {
     interface IGenerator
     {
-        void Generate(SourceProductionContext context, IEnumerable<Klass> klass);
+        void Generate(SourceProductionContext context, IEnumerable<Class> klass);
     }
 }

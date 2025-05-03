@@ -6,7 +6,7 @@ namespace Micro.CodeGen.Generators
 {
     class HttpGenerator : IGenerator
     {
-        public void Generate(SourceProductionContext context, IEnumerable<Klass> klass)
+        public void Generate(SourceProductionContext context, IEnumerable<Class> klass)
         {
             // TODO:
             //   - generate app.MapMicroEndpoints();

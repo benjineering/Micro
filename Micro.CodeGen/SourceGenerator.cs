@@ -4,6 +4,7 @@ using Micro.CodeGen.SyntaxParser;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
+using System.Linq;
 
 namespace Micro.CodeGen
 {
@@ -34,11 +35,26 @@ namespace Micro.CodeGen
                 predicate: (x, _) => x is ClassDeclarationSyntax,
                 transform: (x, _) => ClassParser.Parse(x)
             )
-                .Where(x => x != null)
                 .Collect();
 
-            initContext.RegisterSourceOutput(requestHandlers, (context, klass) =>
-                generator.Generate(context, klass));
+            initContext.RegisterSourceOutput(requestHandlers, (context, parseResult) =>
+            {
+                var diagnostics = parseResult
+                    .SelectMany(x => x.Diagnostics)
+                    .Where(x => x != null)
+                    .ToArray();
+
+                if (diagnostics.Length > 0)
+                {
+                    foreach (var diagnostic in diagnostics)
+                        context.ReportDiagnostic(diagnostic);
+
+                    return; // TODO: handle warnings
+                }
+
+                var classes = parseResult.Select(x => x.Class);
+                generator.Generate(context, classes);
+            });
         }
     }
 }
