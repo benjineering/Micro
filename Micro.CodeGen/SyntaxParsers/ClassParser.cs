@@ -6,14 +6,37 @@ namespace Micro.CodeGen.SyntaxParsers
 {
     static class ClassParser
     {
+        private static readonly string[] _validMethodReturnTypes = new string[]
+        {
+            "global::Micro.Response",
+            "global::System.Threading.Tasks.Task<global::Micro.Response>",
+        };
+
         public static ClassParserResult Parse(GeneratorAttributeSyntaxContext context)
         {
-            var klass = context.TargetSymbol.ContainingType;
+            if (!(context.TargetSymbol is INamedTypeSymbol klass))
+                return new ClassParserResult
+                {
+                    Diagnostics = new Diagnostic[]
+                    {
+                        Diagnostic.Create(
+                        new DiagnosticDescriptor(
+                            "UM200",
+                            title: "Not a class",
+                            messageFormat: "[RequestHandler] should only be applied to a class",
+                            category: nameof(Micro),
+                            defaultSeverity: DiagnosticSeverity.Error,
+                            isEnabledByDefault: true), // TODO: const error codes & messages
+                        context.TargetSymbol?.Locations.FirstOrDefault()),
+                    }
+                };
+
             var name = klass.Name;
             var ns = GetNamespace(klass);
 
             var methodResults = klass.GetMembers()
                 .OfType<IMethodSymbol>()
+                .Where(x => x.MethodKind != MethodKind.Constructor)
                 .Select(ParseMethod)
                 .ToArray();
 
@@ -37,16 +60,16 @@ namespace Micro.CodeGen.SyntaxParsers
 
         private static MethodParserResult ParseMethod(IMethodSymbol method)
         {
-            var returnTypeIsValid = IsValidReturnType(method.ReturnType);
-            if (!returnTypeIsValid)
+            var returnType = method.ReturnType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+            if (!_validMethodReturnTypes.Contains(returnType))
             {
                 return new MethodParserResult
                 {
                     Diagnostic = Diagnostic.Create(
                         new DiagnosticDescriptor(
-                            "UM200",
-                            title: "Micro request handlers must return Micro.Result or System.Task<Micro.Result>",
-                            messageFormat: "",
+                            "UM201",
+                            title: "Wrong return type",
+                            messageFormat: $"Micro request handlers return one of ({string.Join(", ", _validMethodReturnTypes)}) - is {returnType}",
                             category: nameof(Micro),
                             defaultSeverity: DiagnosticSeverity.Error,
                             isEnabledByDefault: true), // TODO: const error codes & messages
@@ -71,21 +94,6 @@ namespace Micro.CodeGen.SyntaxParsers
         {
             return symbol.ContainingNamespace?.ToDisplayString(
                 SymbolDisplayFormat.FullyQualifiedFormat.WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Omitted));
-        }
-
-        private static bool IsValidReturnType(ITypeSymbol type)
-        {
-            if (GetNamespace(type) == nameof(Micro) && type.Name == nameof(Response))
-                return true;
-
-            if (GetNamespace(type) != "System.Threading.Tasks" || type.Name != nameof(System.Threading.Tasks.Task))
-                return false;
-
-            if (!(type is INamedTypeSymbol namedType) || namedType.IsGenericType || namedType.TypeParameters.Length != 1)
-                return false;
-
-            var paramType = namedType.TypeParameters.First();
-            return GetNamespace(paramType) == nameof(Micro) && paramType.Name == nameof(Response);
         }
     }
 }

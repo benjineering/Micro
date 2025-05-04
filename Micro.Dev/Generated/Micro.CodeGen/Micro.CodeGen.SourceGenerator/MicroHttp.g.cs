@@ -12,7 +12,7 @@ namespace Micro.IoC
 
         public static void MapMicroEndpoints(this WebApplication app)
         {
-            
+            app.MapPost("/ProductHandlers", ProductHandlers);
         }
     }
 }

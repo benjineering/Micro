@@ -39,11 +39,6 @@ namespace Micro.CodeGen
 
             initContext.RegisterSourceOutput(requestHandlers, (context, parseResult) =>
             {
-                context.ReportDiagnostic(Diagnostic.Create(
-                    new DiagnosticDescriptor("PLOPS", "parse results", parseResult.Length.ToString(), "Micro", DiagnosticSeverity.Error, true),
-                    null
-                ));
-
                 var diagnostics = parseResult
                     .SelectMany(x => x.Diagnostics)
                     .Where(x => x != null)
