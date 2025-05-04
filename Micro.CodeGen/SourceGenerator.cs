@@ -1,6 +1,6 @@
 ﻿using Micro.CodeGen.Config;
 using Micro.CodeGen.Generators;
-using Micro.CodeGen.SyntaxParser;
+using Micro.CodeGen.SyntaxParsers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
@@ -31,7 +31,7 @@ namespace Micro.CodeGen
             }
 
             var requestHandlers = initContext.SyntaxProvider.ForAttributeWithMetadataName(
-                fullyQualifiedMetadataName: $"{nameof(Micro)}.{nameof(RequestHandlerAttribute)}",
+                fullyQualifiedMetadataName: "Micro.RequestHandlerAttribute",
                 predicate: (x, _) => x is ClassDeclarationSyntax,
                 transform: (x, _) => ClassParser.Parse(x)
             )
@@ -39,6 +39,11 @@ namespace Micro.CodeGen
 
             initContext.RegisterSourceOutput(requestHandlers, (context, parseResult) =>
             {
+                context.ReportDiagnostic(Diagnostic.Create(
+                    new DiagnosticDescriptor("PLOPS", "parse results", parseResult.Length.ToString(), "Micro", DiagnosticSeverity.Error, true),
+                    null
+                ));
+
                 var diagnostics = parseResult
                     .SelectMany(x => x.Diagnostics)
                     .Where(x => x != null)
@@ -53,7 +58,18 @@ namespace Micro.CodeGen
                 }
 
                 var classes = parseResult.Select(x => x.Class);
-                generator.Generate(context, classes);
+
+                try
+                {
+                    generator.Generate(context, classes);
+                }
+                catch (Exception ex)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(
+                        new DiagnosticDescriptor("UM1000", "Error generating code", ex.Message, "Micro", DiagnosticSeverity.Error, true),
+                        null
+                    ));
+                }
             });
         }
     }

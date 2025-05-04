@@ -1,37 +1,59 @@
 ﻿using Micro.CodeGen.Models;
 using Microsoft.CodeAnalysis;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Micro.CodeGen.Generators
 {
     class HttpGenerator : IGenerator
     {
-        public void Generate(SourceProductionContext context, IEnumerable<Class> klass)
+        public void Generate(SourceProductionContext context, IEnumerable<Class> classes)
         {
             // TODO:
-            //   - generate app.MapMicroEndpoints();
+            //   - JsonContexts (1 per class)
             //   - generate TS https://chatgpt.com/c/68115978-a344-800d-83fc-ec969fcb0a24
             //      - models (create a common generator)
             //      - client
 
-            var source = @"using Microsoft.Extensions.DependencyInjection;
+            var endpoints = classes
+                .Select(klass =>
+                {
+                    string path;
+                    string action;
+
+                    if (klass.Namespace == null)
+                    {
+                        path = "/" + klass.Namespace.Replace('.', '/') + klass.Name;
+                        action = klass.Namespace + '.' + klass.Name;
+                    }
+                    else
+                    {
+                        path = "/" + klass.Name;
+                        action = klass.Name;
+                    }
+
+                    return $@"app.MapPost(""{path}"", {action});";
+                });
+
+            var source = $@"using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 
 namespace Micro.IoC
-{
+{{
     public static class EndpointExtensions
-    {
+    {{
         public static void ConfigureMicroJsonContexts(this IServiceCollection services)
-        {
+        {{
 
-        }
+        }}
 
         public static void MapMicroEndpoints(this WebApplication app)
-        {
-
-        }
-    }
-}
+        {{
+            {string.Join(@"
+            ", endpoints)}
+        }}
+    }}
+}}
 ";
             context.AddSource("MicroHttp.g.cs", source);
         }

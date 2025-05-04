@@ -2,7 +2,7 @@
 using Microsoft.CodeAnalysis;
 using System.Linq;
 
-namespace Micro.CodeGen.SyntaxParser
+namespace Micro.CodeGen.SyntaxParsers
 {
     static class ClassParser
     {
@@ -14,7 +14,7 @@ namespace Micro.CodeGen.SyntaxParser
 
             var methodResults = klass.GetMembers()
                 .OfType<IMethodSymbol>()
-                .Select(x => ParseMethod(context, x))
+                .Select(ParseMethod)
                 .ToArray();
 
             var diagnostics = methodResults
@@ -35,17 +35,16 @@ namespace Micro.CodeGen.SyntaxParser
                 };
         }
 
-        private static MethodParserResult ParseMethod(GeneratorAttributeSyntaxContext context, IMethodSymbol method)
+        private static MethodParserResult ParseMethod(IMethodSymbol method)
         {
-            var returnTypeNs = GetNamespace(method.ReturnType);
-
-            if (returnTypeNs != nameof(Micro) || method.ReturnType.Name != nameof(Response))
+            var returnTypeIsValid = IsValidReturnType(method.ReturnType);
+            if (!returnTypeIsValid)
             {
                 return new MethodParserResult
                 {
                     Diagnostic = Diagnostic.Create(
                         new DiagnosticDescriptor(
-                            "UM100",
+                            "UM200",
                             title: "Micro request handlers must return Micro.Result or System.Task<Micro.Result>",
                             messageFormat: "",
                             category: nameof(Micro),
@@ -72,6 +71,21 @@ namespace Micro.CodeGen.SyntaxParser
         {
             return symbol.ContainingNamespace?.ToDisplayString(
                 SymbolDisplayFormat.FullyQualifiedFormat.WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Omitted));
+        }
+
+        private static bool IsValidReturnType(ITypeSymbol type)
+        {
+            if (GetNamespace(type) == nameof(Micro) && type.Name == nameof(Response))
+                return true;
+
+            if (GetNamespace(type) != "System.Threading.Tasks" || type.Name != nameof(System.Threading.Tasks.Task))
+                return false;
+
+            if (!(type is INamedTypeSymbol namedType) || namedType.IsGenericType || namedType.TypeParameters.Length != 1)
+                return false;
+
+            var paramType = namedType.TypeParameters.First();
+            return GetNamespace(paramType) == nameof(Micro) && paramType.Name == nameof(Response);
         }
     }
 }

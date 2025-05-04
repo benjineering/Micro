@@ -7,7 +7,7 @@ namespace Micro.CodeGen.Generators
 {
     class LambdaGenerator : IGenerator
     {
-        public void Generate(SourceProductionContext context, IEnumerable<Class> klass)
+        public void Generate(SourceProductionContext context, IEnumerable<Class> classes)
         {
             throw new NotImplementedException();
         }
