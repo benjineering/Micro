@@ -34,7 +34,7 @@ namespace Micro
 
     public class SuccessResponse : Response
     {
-        public SuccessResponse(HttpStatusCode? statusCode = HttpStatusCode.OK) 
+        public SuccessResponse(HttpStatusCode? statusCode = HttpStatusCode.OK)
             : base(statusCode) { }
     }
 
@@ -42,7 +42,7 @@ namespace Micro
     {
         public T Value { get; }
 
-        public SuccessResponse(T value = default, HttpStatusCode? statusCode = HttpStatusCode.OK) 
+        public SuccessResponse(T value = default, HttpStatusCode? statusCode = HttpStatusCode.OK)
             : base(statusCode)
         {
             Value = value;
@@ -65,7 +65,7 @@ namespace Micro
 
     public class ErrorResponse<TValue, TError> : ErrorResponse<TError>
     {
-        public ErrorResponse(HttpStatusCode statusCode, string errorMessage = null, TError errorObject = default) 
+        public ErrorResponse(HttpStatusCode statusCode, string errorMessage = null, TError errorObject = default)
             : base(statusCode, errorMessage, errorObject) { }
     }
 }

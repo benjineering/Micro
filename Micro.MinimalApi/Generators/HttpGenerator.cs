@@ -1,9 +1,9 @@
-﻿using Micro.CodeGen.Models;
+﻿using Micro.Common;
 using Microsoft.CodeAnalysis;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Micro.CodeGen.Generators
+namespace Micro.MinimalApi.Generators
 {
     class HttpGenerator : IGenerator
     {

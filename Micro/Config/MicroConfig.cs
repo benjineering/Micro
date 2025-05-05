@@ -1,4 +1,4 @@
-﻿namespace Micro.CodeGen.Config
+﻿namespace Micro.Config
 {
     public class MicroConfig
     {
@@ -14,11 +14,11 @@
 
     public class UiProject
     {
-    #if DEBUG
+#if DEBUG
         private const string _defaultOutputDir = "../../../../../dev-micro-ui-app/micro/generated";
-    #else
-        private const string _defaultOutputDir = "./ui/micro";
-    #endif
+#else
+    private const string _defaultOutputDir = "./ui/micro";
+#endif
 
         public string OutputDir { get; set; } = _defaultOutputDir;
     }

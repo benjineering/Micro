@@ -1,7 +1,8 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Testing;
+﻿using Micro.MinimalApi;
+using Microsoft.CodeAnalysis.CSharp.Testing;
 using Microsoft.CodeAnalysis.Testing.Verifiers;
 
-namespace Micro.CodeGen.Tests;
+namespace Micro.Tests;
 
 public class SourceGeneratorTests
 {

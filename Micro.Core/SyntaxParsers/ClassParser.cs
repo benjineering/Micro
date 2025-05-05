@@ -1,8 +1,9 @@
-﻿using Micro.CodeGen.Models;
+﻿using Micro.Common;
+using Micro.Core.Models;
 using Microsoft.CodeAnalysis;
 using System.Linq;
 
-namespace Micro.CodeGen.SyntaxParsers
+namespace Micro.Core.SyntaxParsers
 {
     static class ClassParser
     {
@@ -17,18 +18,7 @@ namespace Micro.CodeGen.SyntaxParsers
             if (!(context.TargetSymbol is INamedTypeSymbol klass))
                 return new ClassParserResult
                 {
-                    Diagnostics = new Diagnostic[]
-                    {
-                        Diagnostic.Create(
-                        new DiagnosticDescriptor(
-                            "UM200",
-                            title: "Not a class",
-                            messageFormat: "[RequestHandler] should only be applied to a class",
-                            category: nameof(Micro),
-                            defaultSeverity: DiagnosticSeverity.Error,
-                            isEnabledByDefault: true), // TODO: const error codes & messages
-                        context.TargetSymbol?.Locations.FirstOrDefault()),
-                    }
+                    Diagnostics = new Diagnostic[] { MicroDiagnostics.Create(MicroDiagnosticType.NotAClass, context.TargetSymbol.Locations) }
                 };
 
             var name = klass.Name;
@@ -65,15 +55,7 @@ namespace Micro.CodeGen.SyntaxParsers
             {
                 return new MethodParserResult
                 {
-                    Diagnostic = Diagnostic.Create(
-                        new DiagnosticDescriptor(
-                            "UM201",
-                            title: "Wrong return type",
-                            messageFormat: $"Micro request handlers return one of ({string.Join(", ", _validMethodReturnTypes)}) - is {returnType}",
-                            category: nameof(Micro),
-                            defaultSeverity: DiagnosticSeverity.Error,
-                            isEnabledByDefault: true), // TODO: const error codes & messages
-                        method.Locations.FirstOrDefault()),
+                    Diagnostic = MicroDiagnostics.Create(MicroDiagnosticType.WrongReturnType, method.Locations)
                 };
             }
 
@@ -83,9 +65,9 @@ namespace Micro.CodeGen.SyntaxParsers
             {
                 Method = new Method
                 {
-                    Name = method.Name,
-                    ReturnType = method.ReturnType,
-                    Parameters = method.Parameters.ToArray(),
+                    Name = method.Name, // TODO
+                    //ReturnType = method.ReturnType,
+                    //Parameters = method.Parameters.ToArray(),
                 },
             };
         }

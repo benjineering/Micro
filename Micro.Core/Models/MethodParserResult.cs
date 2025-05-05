@@ -1,6 +1,7 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using Micro.Common;
+using Microsoft.CodeAnalysis;
 
-namespace Micro.CodeGen.Models
+namespace Micro.Core.Models
 {
     class MethodParserResult
     {

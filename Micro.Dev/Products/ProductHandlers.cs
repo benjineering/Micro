@@ -1,4 +1,6 @@
-﻿namespace Micro.Dev.Products;
+﻿using Micro.Common;
+
+namespace Micro.Dev.Products;
 
 // TODO: dependency injection
 [RequestHandler]
