@@ -2,10 +2,14 @@
 {
     public class Class
     {
-        public string Namespace { get; set; }
+        public TypeName Name { get; }
 
-        public string Name { get; set; }
+        public Method[] Methods { get; }
 
-        public Method[] Methods { get; set; }
+        public Class(TypeName name, Method[] methods)
+        {
+            Name = name;
+            Methods = methods;
+        }
     }
 }

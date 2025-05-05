@@ -42,13 +42,8 @@ namespace Micro.MinimalApi
                 //    .Where(x => x != null)
                 //    .ToArray();
 
-                //if (diagnostics.Length > 0)
-                //{
-                //    foreach (var diagnostic in diagnostics)
-                //        context.ReportDiagnostic(diagnostic);
-
-                //    return; // TODO: handle warnings
-                //}
+                // foreach (var diagnostic in diagnostics)
+                //    context.ReportDiagnostic(diagnostic);
 
                 //var classes = parseResult.Select(x => x.Class);
 

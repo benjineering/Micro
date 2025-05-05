@@ -22,20 +22,10 @@ namespace Micro.Core
 
             initContext.RegisterSourceOutput(requestHandlers, (context, parseResult) =>
             {
-                var diagnostics = parseResult
-                    .SelectMany(x => x.Diagnostics)
-                    .Where(x => x != null)
-                    .ToArray();
+                foreach (var diagnostic in parseResult.SelectMany(x => x.Diagnostics).Where(x => x != null))
+                    context.ReportDiagnostic(diagnostic);
 
-                if (diagnostics.Length > 0)
-                {
-                    foreach (var diagnostic in diagnostics)
-                        context.ReportDiagnostic(diagnostic);
-
-                    return; // TODO: handle warnings
-                }
-
-                var classes = parseResult.Select(x => x.Class);
+                var classes = parseResult.Select(x => x.Class).Where(x => x != null);
 
                 try
                 {

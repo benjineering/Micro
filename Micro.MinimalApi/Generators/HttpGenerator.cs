@@ -50,6 +50,7 @@ namespace Micro.IoC
         public static void MapMicroEndpoints(this WebApplication app)
         {{
             {string.Join(@"
+
             ", endpoints)}
         }}
     }}

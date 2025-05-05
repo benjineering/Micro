@@ -7,10 +7,10 @@ namespace Micro.Core.SyntaxParsers
 {
     static class ClassParser
     {
-        private static readonly string[] _validMethodReturnTypes = new string[]
+        private static readonly TypeName[] _validMethodReturnTypes = new TypeName[]
         {
-            "global::Micro.Response",
-            "global::System.Threading.Tasks.Task<global::Micro.Response>",
+            new TypeName("Micro", "Response"),
+            new TypeName("System.Threading.Tasks", "Task", new TypeName("Micro", "Response")),
         };
 
         public static ClassParserResult Parse(GeneratorAttributeSyntaxContext context)
@@ -21,8 +21,7 @@ namespace Micro.Core.SyntaxParsers
                     Diagnostics = new Diagnostic[] { MicroDiagnostics.Create(MicroDiagnosticType.NotAClass, context.TargetSymbol.Locations) }
                 };
 
-            var name = klass.Name;
-            var ns = GetNamespace(klass);
+            var name = new TypeName(klass.Name, GetNamespace(klass));
 
             var methodResults = klass.GetMembers()
                 .OfType<IMethodSymbol>()
@@ -35,40 +34,40 @@ namespace Micro.Core.SyntaxParsers
                 .Where(x => x != null)
                 .ToArray();
 
-            return diagnostics.Length > 0
-                ? new ClassParserResult { Diagnostics = diagnostics } // TODO: handle warnings
-                : new ClassParserResult
-                {
-                    Class = new Class
-                    {
-                        Name = name,
-                        Namespace = ns,
-                        Methods = methodResults.Select(x => x.Method).ToArray(),
-                    },
-                };
+            var methods = methodResults
+                .Where(x => x != null)
+                .Select(x => x.Method)
+                .ToArray();
+
+            return  new ClassParserResult
+            {
+                Diagnostics = diagnostics,
+                Class = new Class(name, methods),
+            };
         }
 
         private static MethodParserResult ParseMethod(IMethodSymbol method)
         {
-            var returnType = method.ReturnType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+            var parameters = method.Parameters
+                .Select(x =>
+                {
+                    var typeName = TypeName.FromSymbol(x.Type);
+                    return new Parameter(x.Name, typeName);
+                })
+                .ToArray();
+
+            var returnType = TypeName.FromSymbol(method.ReturnType);
             if (!_validMethodReturnTypes.Contains(returnType))
-            {
                 return new MethodParserResult
                 {
-                    Diagnostic = MicroDiagnostics.Create(MicroDiagnosticType.WrongReturnType, method.Locations)
+                    Diagnostic = MicroDiagnostics.Create(MicroDiagnosticType.WrongReturnType, method.Locations),
                 };
-            }
 
             // TODO: handle duplicate method names (overloading)
 
             return new MethodParserResult
             {
-                Method = new Method
-                {
-                    Name = method.Name, // TODO
-                    //ReturnType = method.ReturnType,
-                    //Parameters = method.Parameters.ToArray(),
-                },
+                Method = new Method(method.Name, parameters, returnType),
             };
         }
 

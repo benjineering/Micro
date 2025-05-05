@@ -8,7 +8,7 @@ namespace Micro.Core.Generators
     {
         public static void Generate(SourceProductionContext context, IEnumerable<Class> classes)
         {
-            // TODO: write classes for generation to http or lambda
+            // TODO: write contexts for generation to http or lambda
         }
     }
 }

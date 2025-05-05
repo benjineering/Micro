@@ -4,8 +4,15 @@
     {
         public string Name { get; set; }
 
-        // TODO: POCOs
-        //public IParameterSymbol[] Parameters { get; set; }
-        //public ITypeSymbol ReturnType { get; set; }
+        public Parameter[] Parameters { get; set; }
+
+        public TypeName ReturnType { get; set; }
+
+        public Method(string name, Parameter[] parameters, TypeName returnType)
+        {
+            Name = name;
+            Parameters = parameters;
+            ReturnType = returnType;
+        }
     }
 }
