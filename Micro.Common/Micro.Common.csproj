@@ -8,8 +8,4 @@
 	  <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.13.0" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <ProjectReference Include="..\Micro\Micro.csproj" />
-	</ItemGroup>
-
 </Project>
