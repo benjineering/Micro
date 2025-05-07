@@ -10,27 +10,26 @@ namespace Micro.Tests
         [Fact]
         public void FromSymbol_Works()
         {
-            string code = @"namespace TestNamespace2 { class TestClass2 { } }
-namespace TestNamespace3 { class TestClass3 { } }
-namespace TestNamespace.OhYeah { class TestNamespace.OhYeah<TestNamespace2.TestClass2, TestNamespace3.TestClass3> { } }
+            string code = @"namespace TestNamespace2 { public class TestClass2 { } }
+namespace TestNamespace3 { public class TestClass3 { } }
+namespace TestNamespace.OhYeah { class GenericTestClass<A, B> { } }
+namespace TestNamespace.OhYeah { class TestClass : GenericTestClass<TestNamespace2.TestClass2, TestNamespace3.TestClass3> { } }
 ";
 
             var symbol = GetTypeSymbolFromSource(code, "TestClass");
 
             var typeName = TypeName.FromSymbol(symbol);
 
-            Assert.Equal("TestNamespace.OhYeah.TestNamespace.OhYeah<TestNamespace2.TestClass2, TestNamespace3.TestClass3>", typeName.ToString());
+            Assert.Equal("TestNamespace.OhYeah.TestClass<TestNamespace2.TestClass2, TestNamespace3.TestClass3>", typeName.ToString());
         }
 
         private static ITypeSymbol GetTypeSymbolFromSource(string sourceCode, string typeName)
         {
             var tree = CSharpSyntaxTree.ParseText(sourceCode);
-            var compilation = CSharpCompilation.Create(
-                "TestAssembly",
-                [tree],
-                [MetadataReference.CreateFromFile(typeof(object).Assembly.Location)],
-                new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
-            );
+
+            var compilation = CSharpCompilation.Create("Test")
+                .AddReferences(MetadataReference.CreateFromFile(typeof(object).Assembly.Location))
+                .AddSyntaxTrees(tree);
 
             var model = compilation.GetSemanticModel(tree);
 

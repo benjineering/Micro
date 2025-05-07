@@ -73,9 +73,9 @@ namespace Micro.Common
                 : null;
 
             TypeName[] generics;
-            if (symbol is INamedTypeSymbol namedSymbol)
+            if (symbol.BaseType is INamedTypeSymbol namedSymbol)
             {
-                generics = namedSymbol.TypeParameters
+                generics = namedSymbol.TypeArguments
                     .Select(FromSymbol)
                     .ToArray();
             }
