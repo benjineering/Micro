@@ -1,5 +1,6 @@
 ﻿using Micro.Common;
 using Micro.Core.Generators;
+using Micro.Core.Models;
 using Micro.Core.SyntaxParsers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -16,8 +17,20 @@ namespace Micro.Core
             var requestHandlers = initContext.SyntaxProvider.ForAttributeWithMetadataName(
                 fullyQualifiedMetadataName: "Micro.RequestHandlerAttribute", // TODO: const
                 predicate: (x, _) => x is ClassDeclarationSyntax,
-                transform: (x, _) => ClassParser.Parse(x)
-            )
+                transform: (x, _) =>
+                {
+                    try
+                    {
+                        return ClassParser.Parse(x);
+                    }
+                    catch (Exception ex)
+                    {
+                        return new ClassParserResult
+                        { 
+                            Diagnostics = MicroDiagnostics.CreateArray(MicroDiagnosticType.ClassParserError, messageOverride: ex.ToString()),
+                        };
+                    }
+                })
                 .Collect();
 
             initContext.RegisterSourceOutput(requestHandlers, (context, parseResult) =>

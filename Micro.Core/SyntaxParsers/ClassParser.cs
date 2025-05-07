@@ -18,10 +18,10 @@ namespace Micro.Core.SyntaxParsers
             if (!(context.TargetSymbol is INamedTypeSymbol klass))
                 return new ClassParserResult
                 {
-                    Diagnostics = new Diagnostic[] { MicroDiagnostics.Create(MicroDiagnosticType.NotAClass, context.TargetSymbol.Locations) }
+                    Diagnostics = MicroDiagnostics.CreateArray(MicroDiagnosticType.NotAClass, context.TargetSymbol.Locations),
                 };
 
-            var name = new TypeName(klass.Name, GetNamespace(klass));
+            var name = TypeName.FromSymbol(klass);
 
             var methodResults = klass.GetMembers()
                 .OfType<IMethodSymbol>()
@@ -69,12 +69,6 @@ namespace Micro.Core.SyntaxParsers
             {
                 Method = new Method(method.Name, parameters, returnType),
             };
-        }
-
-        private static string GetNamespace(ISymbol symbol)
-        {
-            return symbol.ContainingNamespace?.ToDisplayString(
-                SymbolDisplayFormat.FullyQualifiedFormat.WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Omitted));
         }
     }
 }
