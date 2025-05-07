@@ -29,7 +29,7 @@ namespace Micro.Common
             if (Generics.Length > 0)
             {
                 var generics = Generics.Select(x => x.ToString());
-                str += $"<{string.Join(", ", $"{generics}")}>";
+                str += $"<{string.Join(", ", generics)}>";
             }
 
             return str;
@@ -53,11 +53,14 @@ namespace Micro.Common
             if (symbol == null)
                 return new TypeName(null, "void");
 
-            var displayString = symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-            IEnumerable<string> parts = displayString.Split(new[] { "::" }, StringSplitOptions.RemoveEmptyEntries);
-
-            if (parts.First() == "global")
-                parts = parts.Skip(1);
+            var displayString = symbol.ToDisplayString(
+                NullableFlowState.None, 
+                new SymbolDisplayFormat(
+                    SymbolDisplayGlobalNamespaceStyle.Omitted, 
+                    SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces, 
+                    SymbolDisplayGenericsOptions.None));
+            
+            IEnumerable<string> parts = displayString.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
 
             var partCount = parts.Count();
             if (partCount == 0)
@@ -73,7 +76,7 @@ namespace Micro.Common
             if (symbol is INamedTypeSymbol namedSymbol)
             {
                 generics = namedSymbol.TypeParameters
-                    .Select(x => FromSymbol(x.DeclaringType))
+                    .Select(FromSymbol)
                     .ToArray();
             }
             else
