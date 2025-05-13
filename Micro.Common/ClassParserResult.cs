@@ -1,9 +1,8 @@
 ﻿using Microsoft.CodeAnalysis;
-using Micro.Common;
 
-namespace Micro.Core.Models
+namespace Micro.Common
 {
-    class ClassParserResult
+    public class ClassParserResult
     {
         public Class Class { get; set; } = null;
 

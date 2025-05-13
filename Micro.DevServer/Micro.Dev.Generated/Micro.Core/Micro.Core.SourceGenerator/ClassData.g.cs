@@ -6,9 +6,10 @@ using Micro.Common;
 
 namespace Micro.Core.Generated
 {
-    protected static class ClassData
+    static class ClassData
     {
-        private static Class[] Values = new Class[]
+        [CoreRequestHandlers]
+        private static Class[] Values => new Class[]
         {
             new Class(
                     new TypeName("Micro.Dev.Products", "ProductHandlers"),
@@ -23,6 +24,6 @@ namespace Micro.Core.Generated
                             new TypeName("System.Threading.Tasks", "Task")
                         ),
                     }),
-        }
+        };
     }
 }

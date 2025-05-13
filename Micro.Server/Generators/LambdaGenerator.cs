@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis;
 using System;
 using System.Collections.Generic;
 
-namespace Micro.MinimalApi.Generators
+namespace Micro.Server.Generators
 {
     class LambdaGenerator : IGenerator
     {

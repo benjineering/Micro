@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Micro.MinimalApi.Generators
+namespace Micro.Server.Generators
 {
     class HttpGenerator : IGenerator
     {
@@ -21,15 +21,15 @@ namespace Micro.MinimalApi.Generators
                     string path;
                     string action;
 
-                    if (klass.Namespace == null)
+                    if (klass.Name.Namespace == null)
                     {
-                        path = "/" + klass.Namespace.Replace('.', '/') + klass.Name;
-                        action = klass.Namespace + '.' + klass.Name;
+                        path = "/" + klass.Name.Namespace.Replace('.', '/') + klass.Name;
+                        action = klass.Name.Namespace + '.' + klass.Name;
                     }
                     else
                     {
-                        path = "/" + klass.Name;
-                        action = klass.Name;
+                        path = "/" + klass.Name.Name;
+                        action = klass.Name.Name;
                     }
 
                     return $@"app.MapPost(""{path}"", {action});";

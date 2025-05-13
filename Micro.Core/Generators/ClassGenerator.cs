@@ -41,13 +41,14 @@ using Micro.Common;
 
 namespace Micro.Core.Generated
 {{
-    protected static class ClassData
+    static class ClassData
     {{
-        private static Class[] Values = new Class[]
+        [CoreRequestHandlers]
+        private static Class[] Values => new Class[]
         {{
             {string.Join("" + @"
             ", values)}
-        }}
+        }};
     }}
 }}
 ";

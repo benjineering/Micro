@@ -2,27 +2,23 @@
 using Microsoft.CodeAnalysis;
 using System.Linq;
 
-namespace Micro.Core.SyntaxParsers
+namespace Micro.Server.SyntaxParsers
 {
     static class ClassParser
     {
-        private static readonly TypeName[] _validMethodReturnTypes = new TypeName[]
-        {
-            new TypeName("Micro", "Response"),
-            new TypeName("System.Threading.Tasks", "Task", new TypeName("Micro", "Response")),
-        };
-
         public static ClassParserResult Parse(GeneratorAttributeSyntaxContext context)
         {
-            if (!(context.TargetSymbol is INamedTypeSymbol klass))
+            if (!(context.TargetSymbol is INamedTypeSymbol props))
                 return new ClassParserResult
                 {
                     Diagnostics = MicroDiagnostics.CreateArray(MicroDiagnosticType.NotAClass, context.TargetSymbol.Locations),
                 };
 
-            var name = TypeName.FromSymbol(klass);
+            // TODO: read serialized classes
 
-            var methodResults = klass.GetMembers()
+            var name = TypeName.FromSymbol(props);
+
+            var methodResults = props.GetMembers()
                 .OfType<IMethodSymbol>()
                 .Where(x => x.MethodKind != MethodKind.Constructor)
                 .Select(ParseMethod)
@@ -56,13 +52,6 @@ namespace Micro.Core.SyntaxParsers
                 .ToArray();
 
             var returnType = TypeName.FromSymbol(method.ReturnType);
-            if (!_validMethodReturnTypes.Contains(returnType))
-                return new MethodParserResult
-                {
-                    Diagnostic = MicroDiagnostics.Create(MicroDiagnosticType.WrongReturnType, method.Locations),
-                };
-
-            // TODO: handle duplicate method names (overloading)
 
             return new MethodParserResult
             {

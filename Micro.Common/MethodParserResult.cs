@@ -1,9 +1,8 @@
-﻿using Micro.Common;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 
-namespace Micro.Core.Models
+namespace Micro.Common
 {
-    class MethodParserResult
+    public class MethodParserResult
     {
         public Method Method { get; set; }
 

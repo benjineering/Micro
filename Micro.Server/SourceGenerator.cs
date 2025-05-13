@@ -1,9 +1,9 @@
 ﻿using Micro.Config;
-using Micro.MinimalApi.Generators;
+using Micro.Server.Generators;
 using Microsoft.CodeAnalysis;
 using System;
 
-namespace Micro.MinimalApi
+namespace Micro.Server
 {
     [Generator(LanguageNames.CSharp)]
     public class SourceGenerator : IIncrementalGenerator

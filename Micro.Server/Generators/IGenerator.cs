@@ -2,7 +2,7 @@
 using Microsoft.CodeAnalysis;
 using System.Collections.Generic;
 
-namespace Micro.MinimalApi.Generators
+namespace Micro.Server.Generators
 {
     interface IGenerator
     {

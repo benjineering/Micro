@@ -1,6 +1,5 @@
 ﻿using Micro.Common;
 using Micro.Core.Generators;
-using Micro.Core.Models;
 using Micro.Core.SyntaxParsers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
