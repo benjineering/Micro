@@ -12,27 +12,39 @@ namespace Micro.Server.SyntaxParsers
         {
             if (!(context.TargetNode is PropertyDeclarationSyntax property))
             {
-                return; // TODO
+                return new ClassParserResult
+                {
+                    Diagnostics = MicroDiagnostics.CreateArray(
+                        MicroDiagnosticType.NotAProperty, 
+                        new Location[] { context.TargetNode.GetLocation() }
+                    ),
+                };
             }
 
             var initializer = property.ExpressionBody?.Expression
                 ?? (property.Initializer?.Value);
 
             if (!(initializer is ArrayCreationExpressionSyntax arrayCreation))
-                return; // TODO
+                return new ClassParserResult
+                {
+                    Diagnostics = MicroDiagnostics.CreateArray(
+                        MicroDiagnosticType.NotAProperty,
+                        new Location[] { initializer.GetLocation() }
+                    ),
+                };
 
-            var data = new List<Class>();
+            var classes = new List<Class>();
 
             foreach (var expr in arrayCreation.Initializer.Expressions)
             {
                 if (expr is ObjectCreationExpressionSyntax objCreation)
                 {
                     var classData = ParseClass(objCreation);
-                    data.Add(classData);
+                    classes.Add(classData);
                 }
             }
 
-
+            return new ClassParserResult { }
         }
 
         private static Class ParseClass(ObjectCreationExpressionSyntax expr)

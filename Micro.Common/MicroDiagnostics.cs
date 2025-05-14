@@ -10,6 +10,8 @@ namespace Micro.Common
         ClassGeneratorError,
         JsonContextGeneratorError,
         NotAClass,
+        NotAProperty,
+        NotAnArray,
         WrongReturnType,
     }
 
@@ -43,8 +45,16 @@ namespace Micro.Common
                 new MicroDiagnostic { Code = "UM200", IsWarning = false, Title = "Not a class", Message = "[RequestHandler] should only be applied to a class" }
             },
             {
+                MicroDiagnosticType.NotAProperty,
+                new MicroDiagnostic { Code = "UM201", IsWarning = false, Title = "Not a property", Message = "[CoreRequestHandlers] should only be applied to a property" }
+            },
+            {
+                MicroDiagnosticType.NotAnArray,
+                new MicroDiagnostic { Code = "UM202", IsWarning = false, Title = "Not an array", Message = "[CoreRequestHandlers] should only be applied to an array" }
+            },
+            {
                 MicroDiagnosticType.WrongReturnType,
-                new MicroDiagnostic { Code = "UM201", IsWarning = false, Title = "Wrong return type", Message = "Request handler methods must return Task<Micro.Response> or Micro.Response (with optional Response generic params)" }
+                new MicroDiagnostic { Code = "UM300", IsWarning = false, Title = "Wrong return type", Message = "Request handler methods must return Task<Micro.Response> or Micro.Response (with optional Response generic params)" }
             },
         };
 
