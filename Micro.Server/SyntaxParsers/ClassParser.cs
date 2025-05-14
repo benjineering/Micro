@@ -1,5 +1,7 @@
 ﻿using Micro.Common;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Micro.Server.SyntaxParsers
@@ -8,55 +10,86 @@ namespace Micro.Server.SyntaxParsers
     {
         public static ClassParserResult Parse(GeneratorAttributeSyntaxContext context)
         {
-            if (!(context.TargetSymbol is INamedTypeSymbol props))
-                return new ClassParserResult
+            if (!(context.TargetNode is PropertyDeclarationSyntax property))
+            {
+                return; // TODO
+            }
+
+            var initializer = property.ExpressionBody?.Expression
+                ?? (property.Initializer?.Value);
+
+            if (!(initializer is ArrayCreationExpressionSyntax arrayCreation))
+                return; // TODO
+
+            var data = new List<Class>();
+
+            foreach (var expr in arrayCreation.Initializer.Expressions)
+            {
+                if (expr is ObjectCreationExpressionSyntax objCreation)
                 {
-                    Diagnostics = MicroDiagnostics.CreateArray(MicroDiagnosticType.NotAClass, context.TargetSymbol.Locations),
-                };
+                    var classData = ParseClass(objCreation);
+                    data.Add(classData);
+                }
+            }
 
-            // TODO: read serialized classes
 
-            var name = TypeName.FromSymbol(props);
+        }
 
-            var methodResults = props.GetMembers()
-                .OfType<IMethodSymbol>()
-                .Where(x => x.MethodKind != MethodKind.Constructor)
+        private static Class ParseClass(ObjectCreationExpressionSyntax expr)
+        {
+            var args = expr.ArgumentList.Arguments;
+
+            var typeNameExpr = (ObjectCreationExpressionSyntax)args[0].Expression;
+            var typeName = ParseTypeName(typeNameExpr);
+
+            var methodsArray = (ArrayCreationExpressionSyntax)args[1].Expression;
+
+            var methods = methodsArray.Initializer.Expressions
+                .OfType<ObjectCreationExpressionSyntax>()
                 .Select(ParseMethod)
                 .ToArray();
 
-            var diagnostics = methodResults
-                .Select(x => x.Diagnostic)
-                .Where(x => x != null)
-                .ToArray();
-
-            var methods = methodResults
-                .Where(x => x != null)
-                .Select(x => x.Method)
-                .ToArray();
-
-            return  new ClassParserResult
-            {
-                Diagnostics = diagnostics,
-                Class = new Class(name, methods),
-            };
+            return new Class(typeName, methods);
         }
 
-        private static MethodParserResult ParseMethod(IMethodSymbol method)
+        private static Method ParseMethod(ObjectCreationExpressionSyntax expr)
         {
-            var parameters = method.Parameters
-                .Select(x =>
-                {
-                    var typeName = TypeName.FromSymbol(x.Type);
-                    return new Parameter(x.Name, typeName);
-                })
+            var args = expr.ArgumentList.Arguments;
+
+            var name = args[0].Expression.ToString().Trim('"');
+
+            var parametersArray = (ArrayCreationExpressionSyntax)args[1].Expression;
+            var parameters = parametersArray.Initializer.Expressions
+                .OfType<ObjectCreationExpressionSyntax>()
+                .Select(ParseParameter)
                 .ToArray();
 
-            var returnType = TypeName.FromSymbol(method.ReturnType);
+            var returnTypeExpr = (ObjectCreationExpressionSyntax)args[2].Expression;
+            var returnType = ParseTypeName(returnTypeExpr);
 
-            return new MethodParserResult
-            {
-                Method = new Method(method.Name, parameters, returnType),
-            };
+            return new Method(name, parameters, returnType);
+        }
+
+        private static Parameter ParseParameter(ObjectCreationExpressionSyntax expr)
+        {
+            var args = expr.ArgumentList.Arguments;
+
+            var name = args[0].Expression.ToString().Trim('"');
+
+            var typeNameExpr = (ObjectCreationExpressionSyntax)args[1].Expression;
+            var typeName = ParseTypeName(typeNameExpr);
+
+            return new Parameter(name, typeName);
+        }
+
+        private static TypeName ParseTypeName(ObjectCreationExpressionSyntax expr)
+        {
+            var args = expr.ArgumentList.Arguments;
+
+            var @namespace = args[0].Expression.ToString().Trim('"');
+            var name = args[1].Expression.ToString().Trim('"');
+
+            return new TypeName(@namespace, name);
         }
     }
 }
