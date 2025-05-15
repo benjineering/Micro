@@ -8,16 +8,19 @@ namespace Micro.Server.SyntaxParsers
 {
     static class ClassParser
     {
-        public static ClassParserResult Parse(GeneratorAttributeSyntaxContext context)
+        public static ClassParserResult[] Parse(GeneratorAttributeSyntaxContext context)
         {
             if (!(context.TargetNode is PropertyDeclarationSyntax property))
             {
-                return new ClassParserResult
+                return new ClassParserResult[]
                 {
-                    Diagnostics = MicroDiagnostics.CreateArray(
-                        MicroDiagnosticType.NotAProperty, 
-                        new Location[] { context.TargetNode.GetLocation() }
-                    ),
+                    new ClassParserResult
+                    {
+                        Diagnostics = MicroDiagnostics.CreateArray(
+                            MicroDiagnosticType.NotAProperty,
+                            new Location[] { context.TargetNode.GetLocation() }
+                        ),
+                    },
                 };
             }
 
@@ -25,12 +28,15 @@ namespace Micro.Server.SyntaxParsers
                 ?? (property.Initializer?.Value);
 
             if (!(initializer is ArrayCreationExpressionSyntax arrayCreation))
-                return new ClassParserResult
+                return new ClassParserResult[]
                 {
-                    Diagnostics = MicroDiagnostics.CreateArray(
-                        MicroDiagnosticType.NotAProperty,
-                        new Location[] { initializer.GetLocation() }
-                    ),
+                    new ClassParserResult
+                    {
+                        Diagnostics = MicroDiagnostics.CreateArray(
+                            MicroDiagnosticType.NotAProperty,
+                            new Location[] { initializer.GetLocation() }
+                        ),
+                    },
                 };
 
             var classes = new List<Class>();
@@ -44,7 +50,7 @@ namespace Micro.Server.SyntaxParsers
                 }
             }
 
-            return new ClassParserResult { }
+            return classes.Select(x => new ClassParserResult { Class = x }).ToArray();
         }
 
         private static Class ParseClass(ObjectCreationExpressionSyntax expr)

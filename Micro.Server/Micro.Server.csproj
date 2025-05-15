@@ -20,10 +20,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Micro.Common\Micro.Common.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <Folder Include="Micro\Config\" />
 	</ItemGroup>
 

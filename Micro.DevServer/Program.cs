@@ -1,8 +1,8 @@
-//using Micro.IoC;
+using Micro.IoC;
 
 var builder = WebApplication.CreateSlimBuilder(args);
-//builder.Services.ConfigureMicroJsonContexts();
+builder.Services.ConfigureMicroJsonContexts();
 
 var app = builder.Build();
-//app.MapMicroEndpoints();
+app.MapMicroEndpoints();
 app.Run();

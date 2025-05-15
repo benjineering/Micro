@@ -9,24 +9,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Compile Include="..\Micro.Common\Class.cs" Link="Common\Class.cs" />
-	  <Compile Include="..\Micro.Common\ClassParserResult.cs" Link="Common\ClassParserResult.cs" />
-	  <Compile Include="..\Micro.Common\CoreRequestHandlersAttribute.cs" Link="Common\CoreRequestHandlersAttribute.cs" />
-	  <Compile Include="..\Micro.Common\Method.cs" Link="Common\Method.cs" />
-	  <Compile Include="..\Micro.Common\MethodParserResult.cs" Link="Common\MethodParserResult.cs" />
-	  <Compile Include="..\Micro.Common\MicroDiagnostics.cs" Link="Common\MicroDiagnostics.cs" />
-	  <Compile Include="..\Micro.Common\Parameter.cs" Link="Common\Parameter.cs" />
-	  <Compile Include="..\Micro.Common\StringExtensions.cs" Link="Common\StringExtensions.cs" />
-	  <Compile Include="..\Micro.Common\TypeName.cs" Link="Common\TypeName.cs" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.13.0" />
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.13.0" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Common\" />
 	</ItemGroup>
 
 </Project>
