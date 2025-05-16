@@ -1,113 +1,73 @@
-﻿using Micro.Common;
+﻿using Micro.Server.Models;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Micro.Server.SyntaxParsers
 {
     static class ClassParser
     {
-        public static ClassParserResult[] Parse(GeneratorAttributeSyntaxContext context)
+        private static readonly TypeName[] _validMethodReturnTypes = new TypeName[]
         {
-            if (!(context.TargetNode is PropertyDeclarationSyntax property))
-            {
-                return new ClassParserResult[]
-                {
-                    new ClassParserResult
-                    {
-                        Diagnostics = MicroDiagnostics.CreateArray(
-                            MicroDiagnosticType.NotAProperty,
-                            new Location[] { context.TargetNode.GetLocation() }
-                        ),
-                    },
-                };
-            }
+            new TypeName("Micro", "Response"),
+            new TypeName("System.Threading.Tasks", "Task", new TypeName("Micro", "Response")),
+        };
 
-            var initializer = property.ExpressionBody?.Expression
-                ?? (property.Initializer?.Value);
-
-            if (!(initializer is ArrayCreationExpressionSyntax arrayCreation))
-                return new ClassParserResult[]
+        public static ClassParserResult Parse(GeneratorAttributeSyntaxContext context)
+        {
+            if (!(context.TargetSymbol is INamedTypeSymbol klass))
+                return new ClassParserResult
                 {
-                    new ClassParserResult
-                    {
-                        Diagnostics = MicroDiagnostics.CreateArray(
-                            MicroDiagnosticType.NotAProperty,
-                            new Location[] { initializer.GetLocation() }
-                        ),
-                    },
+                    Diagnostics = MicroDiagnostics.CreateArray(MicroDiagnosticType.NotAClass, context.TargetSymbol.Locations),
                 };
 
-            var classes = new List<Class>();
+            var name = TypeName.FromSymbol(klass);
 
-            foreach (var expr in arrayCreation.Initializer.Expressions)
-            {
-                if (expr is ObjectCreationExpressionSyntax objCreation)
-                {
-                    var classData = ParseClass(objCreation);
-                    classes.Add(classData);
-                }
-            }
-
-            return classes.Select(x => new ClassParserResult { Class = x }).ToArray();
-        }
-
-        private static Class ParseClass(ObjectCreationExpressionSyntax expr)
-        {
-            var args = expr.ArgumentList.Arguments;
-
-            var typeNameExpr = (ObjectCreationExpressionSyntax)args[0].Expression;
-            var typeName = ParseTypeName(typeNameExpr);
-
-            var methodsArray = (ArrayCreationExpressionSyntax)args[1].Expression;
-
-            var methods = methodsArray.Initializer.Expressions
-                .OfType<ObjectCreationExpressionSyntax>()
+            var methodResults = klass.GetMembers()
+                .OfType<IMethodSymbol>()
+                .Where(x => x.MethodKind != MethodKind.Constructor)
                 .Select(ParseMethod)
                 .ToArray();
 
-            return new Class(typeName, methods);
-        }
-
-        private static Method ParseMethod(ObjectCreationExpressionSyntax expr)
-        {
-            var args = expr.ArgumentList.Arguments;
-
-            var name = args[0].Expression.ToString().Trim('"');
-
-            var parametersArray = (ArrayCreationExpressionSyntax)args[1].Expression;
-            var parameters = parametersArray.Initializer.Expressions
-                .OfType<ObjectCreationExpressionSyntax>()
-                .Select(ParseParameter)
+            var diagnostics = methodResults
+                .Select(x => x.Diagnostic)
+                .Where(x => x != null)
                 .ToArray();
 
-            var returnTypeExpr = (ObjectCreationExpressionSyntax)args[2].Expression;
-            var returnType = ParseTypeName(returnTypeExpr);
+            var methods = methodResults
+                .Where(x => x != null)
+                .Select(x => x.Method)
+                .ToArray();
 
-            return new Method(name, parameters, returnType);
+            return new ClassParserResult
+            {
+                Diagnostics = diagnostics,
+                Class = new Class(name, methods),
+            };
         }
 
-        private static Parameter ParseParameter(ObjectCreationExpressionSyntax expr)
+        private static MethodParserResult ParseMethod(IMethodSymbol method)
         {
-            var args = expr.ArgumentList.Arguments;
+            var parameters = method.Parameters
+                .Select(x =>
+                {
+                    var typeName = TypeName.FromSymbol(x.Type);
+                    return new Parameter(x.Name, typeName);
+                })
+                .ToArray();
 
-            var name = args[0].Expression.ToString().Trim('"');
+            var returnType = TypeName.FromSymbol(method.ReturnType);
+            if (!_validMethodReturnTypes.Contains(returnType))
+                return new MethodParserResult
+                {
+                    Diagnostic = MicroDiagnostics.Create(MicroDiagnosticType.WrongReturnType, method.Locations),
+                };
 
-            var typeNameExpr = (ObjectCreationExpressionSyntax)args[1].Expression;
-            var typeName = ParseTypeName(typeNameExpr);
+            // TODO: handle duplicate method names (overloading)
 
-            return new Parameter(name, typeName);
-        }
-
-        private static TypeName ParseTypeName(ObjectCreationExpressionSyntax expr)
-        {
-            var args = expr.ArgumentList.Arguments;
-
-            var @namespace = args[0].Expression.ToString().Trim('"');
-            var name = args[1].Expression.ToString().Trim('"');
-
-            return new TypeName(@namespace, name);
+            return new MethodParserResult
+            {
+                Method = new Method(method.Name, parameters, returnType),
+            };
         }
     }
 }

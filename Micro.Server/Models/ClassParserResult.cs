@@ -1,6 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 
-namespace Micro.Common
+namespace Micro.Server.Models
 {
     public class ClassParserResult
     {

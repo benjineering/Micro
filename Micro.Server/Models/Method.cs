@@ -1,4 +1,4 @@
-﻿namespace Micro.Common
+﻿namespace Micro.Server.Models
 {
     public class Method
     {

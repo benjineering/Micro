@@ -10,13 +10,22 @@
 		<EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
 		<ImplicitUsings>true</ImplicitUsings>
 		<InvariantGlobalization>true</InvariantGlobalization>
+		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+		<CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
 	</PropertyGroup>
+	
+	<ItemGroup>
+	  <Compile Remove="Generated\**" />
+	  <EmbeddedResource Remove="Generated\**" />
+	  <None Remove="Generated\**" />
+	</ItemGroup>
 	
 	<ItemGroup>
 		<PackageReference Include="Amazon.Lambda.Core" Version="2.5.1" />
 		<PackageReference Include="Amazon.Lambda.RuntimeSupport" Version="1.13.0" />
 		<PackageReference Include="Amazon.Lambda.Serialization.SystemTextJson" Version="2.4.4" />
-		<ProjectReference Include="..\Micro.Core\Micro.Core.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+		<ProjectReference Include="..\..\..\Micro.Server\Micro.Server.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+		<ProjectReference Include="..\..\..\Micro\Micro.csproj" />
 	</ItemGroup>
 	
 </Project>

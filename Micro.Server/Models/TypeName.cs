@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Micro.Common
+namespace Micro.Server.Models
 {
     public class TypeName
     {

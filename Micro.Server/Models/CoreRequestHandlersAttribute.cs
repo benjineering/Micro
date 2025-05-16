@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Micro.Common
+namespace Micro.Server.Models
 {
     [AttributeUsage(AttributeTargets.Property)]
     public class CoreRequestHandlersAttribute : Attribute { }

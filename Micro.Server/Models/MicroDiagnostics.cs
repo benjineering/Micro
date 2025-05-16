@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Micro.Common
+namespace Micro.Server.Models
 {
     public enum MicroDiagnosticType
     {
@@ -10,8 +10,6 @@ namespace Micro.Common
         ClassGeneratorError,
         JsonContextGeneratorError,
         NotAClass,
-        NotAProperty,
-        NotAnArray,
         WrongReturnType,
     }
 
@@ -43,14 +41,6 @@ namespace Micro.Common
             {
                 MicroDiagnosticType.NotAClass,
                 new MicroDiagnostic { Code = "UM200", IsWarning = false, Title = "Not a class", Message = "[RequestHandler] should only be applied to a class" }
-            },
-            {
-                MicroDiagnosticType.NotAProperty,
-                new MicroDiagnostic { Code = "UM201", IsWarning = false, Title = "Not a property", Message = "[CoreRequestHandlers] should only be applied to a property" }
-            },
-            {
-                MicroDiagnosticType.NotAnArray,
-                new MicroDiagnostic { Code = "UM202", IsWarning = false, Title = "Not an array", Message = "[CoreRequestHandlers] should only be applied to an array" }
             },
             {
                 MicroDiagnosticType.WrongReturnType,

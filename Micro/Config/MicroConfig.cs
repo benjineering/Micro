@@ -2,14 +2,7 @@
 {
     public class MicroConfig
     {
-        public ServerGeneratorType ServerGeneratorType { get; set; }
         public UiProject UiProject { get; set; } = new UiProject();
-    }
-
-    public enum ServerGeneratorType
-    {
-        Http,
-        Lambda
     }
 
     public class UiProject
