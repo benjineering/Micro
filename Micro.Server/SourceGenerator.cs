@@ -15,12 +15,14 @@ namespace Micro.Server
 
             var requestHandlers = initContext.SyntaxProvider.ForAttributeWithMetadataName(
                 fullyQualifiedMetadataName: "Micro.RequestHandlerAttribute", // TODO: const
-                predicate: (x, _) => true,
+                predicate: (_, __) => true,
                 transform: (x, _) => ClassParser.Parse(x)
             ).Collect();
 
             initContext.RegisterSourceOutput(requestHandlers, (context, parseResult) =>
             {
+                //context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("x", "plop", "aw jeez", "y", DiagnosticSeverity.Error, true), null));
+
                 var diagnostics = parseResult
                     .SelectMany(x => x.Diagnostics)
                     .Where(x => x != null)

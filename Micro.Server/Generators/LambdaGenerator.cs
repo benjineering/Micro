@@ -1,6 +1,5 @@
 ﻿using Micro.Server.Models;
 using Microsoft.CodeAnalysis;
-using System;
 using System.Collections.Generic;
 
 namespace Micro.Server.Generators
@@ -9,8 +8,19 @@ namespace Micro.Server.Generators
     {
         public void Generate(SourceProductionContext context, IEnumerable<Class> classes)
         {
-            // TODO
-            throw new NotImplementedException();
+            foreach (var klass in classes)
+            {
+                var source = $@"namespace Micro.Internal.{klass.Name.Namespace}
+{{
+    class {klass.Name.Name}
+    {{
+        // TODO
+    }}
+}}
+";
+
+                context.AddSource($@"{klass.Name}.g.cs", source);
+            }
         }
     }
 }
